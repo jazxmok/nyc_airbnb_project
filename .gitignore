@@ -1,0 +1,27 @@
+# Python cache files
+__pycache__/
+*.pyc
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Environment files
+.env
+.venv/
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Streamlit logs
+.streamlit/
+
+# Data files you don't want to push
+data/raw_*.csv
+data/*.zip
+data/*.xlsx
+
+# Models (keep only final one)
+*.pkl
+!src/price_model.pkl
