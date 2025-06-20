@@ -1,23 +1,28 @@
-# nyc_airbnb_project
-This project analyzes New York City Airbnb data to explore rental trends and predict listing prices using an interactive Streamlit dashboard.
+# Agile Data Science Project - New York City Airbnb Open Data 
 
-# NYC Airbnb Data Science Dashboard 🏙️
+## 👥 Team Members
+Hi, I am Mok Wei Je a UTM's Master Student 
 
-This project analyzes New York City Airbnb data to explore rental trends and predict listing prices using an interactive Streamlit dashboard.
-
-## 🔍 Features
-- Filter by neighborhood group and room type
-- Predict price using ML model
-- Visualize average prices and availability
-- Display summary metrics
+## 🎯 Project Objective
+Briefly describe the problem you're solving and what the dashboard does.
 
 ## 📁 Project Structure
-- `/data`: Raw & cleaned data
-- `/src`: Scripts for data cleaning & modeling
-- `/tests`: Optional unit tests
-- `dashboard.py`: Streamlit app
+- `/data`: Dataset used (raw and processed)
+- `/src`: Scripts for cleaning, analysis, modeling
+- `/dashboard.py`: Streamlit dashboard
+- `/tests`: Testing functions
+- `/agile`: Agile documents (user stories, sprint backlog, etc.)
 
-## 🚀 Getting Started
+## 🔗 Important Links
+- 📊 [Streamlit Dashboard](URL)
+- 💻 [GitHub Repository](URL)
+- 🎥 [Presentation Video](URL)
+
+## 🛠️ Tools Used
+- Python, Streamlit, pandas, scikit-learn, matplotlib/seaborn
+- Git + GitHub
+
+## 📌 Instructions to Run
 ```bash
 pip install -r requirements.txt
 streamlit run dashboard.py
