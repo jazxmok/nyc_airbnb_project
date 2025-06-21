@@ -52,6 +52,17 @@ def prepare_input_dict(neigh: str, room: str, min_nights: int, num_reviews: int,
                        rev_month: float, host_listings: int, avail_days: int) -> pd.DataFrame:
 
 
+# --- Prediction logic ---
+input_df = prepare_input_dict(
+    min_nights,
+    num_reviews,
+    rev_month,
+    host_listings,
+    avail_days,
+    neigh,
+    room
+)
+
 if st.button("🔮 Predict Price"):
     pred_price = model.predict(input_df)[0]
     st.success(f"Estimated Price: **${pred_price:.2f}** per night")
