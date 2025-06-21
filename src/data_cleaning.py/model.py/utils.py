@@ -1,56 +1,31 @@
-# src/utils.py
+# src/model.py
+
 import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 import joblib
-import os
 
-MODEL_PATH = "src/price_model.pkl"
-DATA_PATH = "data/cleaned_airbnb.csv"
+def train_price_model(data_path: str, model_output_path: str):
+    df = pd.read_csv(data_path)
 
-# 🔹 Load cleaned data
-def load_cleaned_data(filepath=DATA_PATH) -> pd.DataFrame:
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Dataset not found: {filepath}")
-    return pd.read_csv(filepath)
+    # One-hot encode categorical columns
+    df = pd.get_dummies(df, columns=["neighbourhood_group", "room_type"], drop_first=True)
 
-# 🔹 Load trained model
-def load_model(filepath=MODEL_PATH):
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Model file not found: {filepath}")
-    return joblib.load(filepath)
+    X = df.drop("price", axis=1)
+    y = df["price"]
 
-# 🔹 Get feature template for model input (important for prediction)
-def get_model_feature_template() -> list:
-    return [
-        'minimum_nights',
-        'number_of_reviews',
-        'reviews_per_month',
-        'calculated_host_listings_count',
-        'availability_365',
-        'neighbourhood_group_Brooklyn',
-        'neighbourhood_group_Manhattan',
-        'neighbourhood_group_Queens',
-        'neighbourhood_group_Staten Island',
-        'room_type_Private room',
-        'room_type_Shared room'
-    ]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 🔹 Prepare user input into model-ready DataFrame
-def prepare_input_dict(min_nights, num_reviews, rev_per_month, host_count, avail, neigh, room) -> pd.DataFrame:
-    input_data = {
-        "minimum_nights": [min_nights],
-        "number_of_reviews": [num_reviews],
-        "reviews_per_month": [rev_per_month],
-        "calculated_host_listings_count": [host_count],
-        "availability_365": [avail],
-        "neighbourhood_group_Brooklyn": [1 if neigh == "Brooklyn" else 0],
-        "neighbourhood_group_Manhattan": [1 if neigh == "Manhattan" else 0],
-        "neighbourhood_group_Queens": [1 if neigh == "Queens" else 0],
-        "neighbourhood_group_Staten Island": [1 if neigh == "Staten Island" else 0],
-        "room_type_Private room": [1 if room == "Private room" else 0],
-        "room_type_Shared room": [1 if room == "Shared room" else 0]
-    }
-    return pd.DataFrame(input_data)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    preds = model.predict(X_test)
 
-# 🔹 Log function result for debugging
-def log(msg: str):
-    print(f"[INFO] {msg}")
+    rmse = mean_squared_error(y_test, preds, squared=False)
+    print(f"✅ Model trained. RMSE: ${rmse:.2f}")
+
+    joblib.dump(model, model_output_path)
+    print(f"✅ Model saved to {model_output_path}")
+
+if __name__ == "__main__":
+    train_price_model("data/cleaned_airbnb.csv", "src/price_model.pkl")
