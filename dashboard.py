@@ -48,7 +48,9 @@ host_listings = st.number_input("Host Listings Count", min_value=1, max_value=10
 avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
 
 # --- Prediction logic ---
-input_df = prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room)
+def prepare_input_dict(neigh: str, room: str, min_nights: int, num_reviews: int,
+                       rev_month: float, host_listings: int, avail_days: int) -> pd.DataFrame:
+
 
 if st.button("🔮 Predict Price"):
     pred_price = model.predict(input_df)[0]
