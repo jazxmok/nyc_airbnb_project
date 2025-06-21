@@ -8,9 +8,8 @@ import os
 import sys
 
 # 🔧 Fix import path so 'src/' is recognized
-sys.path.append(os.path.abspath("src"))
+from src.utils import load_cleaned_data, load_model, prepare_input_dict
 
-from utils import load_cleaned_data, load_model, prepare_input_dict
 
 # --- Load data and model ---
 df = load_cleaned_data()
