@@ -8,7 +8,7 @@ import sys
 from utils import load_cleaned_data, load_model
 
 # Set the correct path to your data
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "AB_NYC_2019_cleaned.csv")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "NYC_2019.csv")
 
 try:
     # --- Load data and model ---
