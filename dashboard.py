@@ -8,7 +8,8 @@ import sys
 # --- Data loading helpers ---
 def load_cleaned_data():
     data_path = os.path.join("data", "nyc_2019.csv")
-    return pd.read_csv(data_path)
+    df = pd.read_csv(data_path)
+    return df
 
 def load_model():
     model_path = os.path.join("models", "airbnb_price_model.pkl")
