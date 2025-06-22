@@ -30,10 +30,6 @@ def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_
         "room_type_Shared room": [1 if room == "Shared room" else 0]
     })
 
-# --- Load data & model first ---
-df = load_cleaned_data()
-model = load_model()
-
 # --- Sidebar filters ---
 st.sidebar.title("🔍 Filter Listings")
 neigh = st.sidebar.selectbox("Neighbourhood Group", df['neighbourhood_group'].unique())
