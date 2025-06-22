@@ -11,7 +11,7 @@ def load_cleaned_data():
     return pd.read_csv(data_path)
     
 def load_model():
-    model_path = os.path.join("models", "airbnb_price_model.pkl")
+    model_path = os.path.join("src", "price_model.pkl")
     return joblib.load(model_path)
 
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
