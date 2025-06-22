@@ -6,6 +6,8 @@ import pandas as pd
 import joblib
 import os
 import sys
+from src.utils import prepare_input_dict
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 # 🔧 Fix import path so 'src/' is recognized
 from utils import load_cleaned_data, load_model, prepare_input_dict
