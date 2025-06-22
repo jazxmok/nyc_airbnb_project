@@ -70,8 +70,6 @@ def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_
         "room_type_Shared room": [1 if room == "Shared room" else 0]
     })
 
-
-
 if st.button("🔮 Predict Price"):
     pred_price = model.predict(input_df)[0]
     st.success(f"Estimated Price: **${pred_price:.2f}** per night")
