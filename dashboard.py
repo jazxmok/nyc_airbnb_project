@@ -14,8 +14,13 @@ from utils import load_cleaned_data, load_model, prepare_input_dict
 
 
 # --- Load data and model ---
-df = load_cleaned_data()
-model = load_model()
+def load_cleaned_data():
+    data_path = os.path.join("data", "nyc_2019.csv")  # 👈 using nyc_2019.csv now
+    return pd.read_csv(data_path)
+
+def load_model():
+    model_path = os.path.join("models", "airbnb_price_model.pkl")
+    return joblib.load(model_path)
 
 # --- Sidebar filters ---
 st.sidebar.title("🔍 Filter Listings")
