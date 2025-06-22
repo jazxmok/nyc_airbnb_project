@@ -3,68 +3,73 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+import joblib
 import os
 import sys
-from utils import load_cleaned_data, load_model
+from src.utils import prepare_input_dict
 
-# Set the correct path to your data
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "NYC_2019.csv")
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+# 🔧 Fix import path so 'src/' is recognized
+from utils import load_cleaned_data, load_model, prepare_input_dict
 
-try:
-    # --- Load data and model ---
-    df = load_cleaned_data(DATA_PATH)  # Pass the path to your function
-    model = load_model()
-    
-    # --- Sidebar filters ---
-    st.sidebar.title("🔍 Filter Listings")
-    neigh = st.sidebar.selectbox("Neighbourhood Group", df['neighbourhood_group'].unique())
-    room = st.sidebar.selectbox("Room Type", df['room_type'].unique())
 
-    filtered_df = df[(df['neighbourhood_group'] == neigh) & (df['room_type'] == room)]
+# --- Load data and model ---
+df = load_cleaned_data()
+model = load_model()
 
-    # --- Display dashboard content ---
-    st.title("🏙️ NYC Airbnb Explorer & Price Predictor")
-    st.markdown(f"Showing **{len(filtered_df)} listings** for **{neigh} - {room}**")
+# --- Sidebar filters ---
+st.sidebar.title("🔍 Filter Listings")
+neigh = st.sidebar.selectbox("Neighbourhood Group", df['neighbourhood_group'].unique())
+room = st.sidebar.selectbox("Room Type", df['room_type'].unique())
 
-    # Metrics columns
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Avg Price", f"${filtered_df['price'].mean():.2f}")
-    col2.metric("Avg Reviews/Month", f"{filtered_df['reviews_per_month'].mean():.2f}")
-    col3.metric("Avg Availability", f"{filtered_df['availability_365'].mean():.0f} days")
+filtered_df = df[(df['neighbourhood_group'] == neigh) & (df['room_type'] == room)]
 
-    # Visualization
-    st.subheader("💸 Price Distribution")
-    fig = px.histogram(filtered_df, x="price", nbins=30, title="Distribution of Prices")
-    st.plotly_chart(fig, use_container_width=True)
+# --- Title and summary ---
+st.title("🏙️ NYC Airbnb Explorer & Price Predictor")
+st.markdown(f"Showing **{len(filtered_df)} listings** for **{neigh} - {room}**")
 
-    # Prediction Section
-    st.header("🧠 Predict Airbnb Listing Price")
-    st.markdown("Fill in the details below to estimate the price per night:")
+col1, col2, col3 = st.columns(3)
+col1.metric("Avg Price", f"${filtered_df['price'].mean():.2f}")
+col2.metric("Avg Reviews/Month", f"{filtered_df['reviews_per_month'].mean():.2f}")
+col3.metric("Avg Availability", f"{filtered_df['availability_365'].mean():.0f} days")
 
-    # Input fields
-    min_nights = st.number_input("Minimum Nights", min_value=1, max_value=30, value=3)
-    num_reviews = st.number_input("Number of Reviews", min_value=0, max_value=1000, value=10)
-    rev_month = st.number_input("Reviews per Month", min_value=0.0, max_value=30.0, value=1.2)
-    host_listings = st.number_input("Host Listings Count", min_value=1, max_value=100, value=2)
-    avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
+# --- Visualization ---
+st.subheader("💸 Price Distribution")
+fig = px.histogram(filtered_df, x="price", nbins=30, title="Distribution of Prices")
+st.plotly_chart(fig, use_container_width=True)
 
-    if st.button("🔮 Predict Price"):
-        input_df = pd.DataFrame({
-            "minimum_nights": [min_nights],
-            "number_of_reviews": [num_reviews],
-            "reviews_per_month": [rev_month],
-            "calculated_host_listings_count": [host_listings],
-            "availability_365": [avail_days],
-            "neighbourhood_group_Brooklyn": [1 if neigh == "Brooklyn" else 0],
-            "neighbourhood_group_Manhattan": [1 if neigh == "Manhattan" else 0],
-            "neighbourhood_group_Queens": [1 if neigh == "Queens" else 0],
-            "neighbourhood_group_Staten Island": [1 if neigh == "Staten Island" else 0],
-            "room_type_Private room": [1 if room == "Private room" else 0],
-            "room_type_Shared room": [1 if room == "Shared room" else 0]
-        })
-        pred_price = model.predict(input_df)[0]
-        st.success(f"Estimated Price: **${pred_price:.2f}** per night")
+# --- Prediction Section ---
+st.header("🧠 Predict Airbnb Listing Price")
 
-except Exception as e:
-    st.error(f"An error occurred: {str(e)}")
-    st.info("Please check if the data file exists at the correct path.")
+st.markdown("Fill in the details below to estimate the price per night:")
+
+min_nights = st.number_input("Minimum Nights", min_value=1, max_value=30, value=3)
+num_reviews = st.number_input("Number of Reviews", min_value=0, max_value=1000, value=10)
+rev_month = st.number_input("Reviews per Month", min_value=0.0, max_value=30.0, value=1.2)
+host_listings = st.number_input("Host Listings Count", min_value=1, max_value=100, value=2)
+avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
+
+# --- Prediction logic ---
+def prepare_input_dict(neigh: str, room: str, min_nights: int, num_reviews: int,
+                       rev_month: float, host_listings: int, avail_days: int) -> pd.DataFrame:
+
+
+# --- Prediction logic ---
+def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
+    return pd.DataFrame({
+        "minimum_nights": [min_nights],
+        "number_of_reviews": [num_reviews],
+        "reviews_per_month": [rev_month],
+        "calculated_host_listings_count": [host_listings],
+        "availability_365": [avail_days],
+        "neighbourhood_group_Brooklyn": [1 if neigh == "Brooklyn" else 0],
+        "neighbourhood_group_Manhattan": [1 if neigh == "Manhattan" else 0],
+        "neighbourhood_group_Queens": [1 if neigh == "Queens" else 0],
+        "neighbourhood_group_Staten Island": [1 if neigh == "Staten Island" else 0],
+        "room_type_Private room": [1 if room == "Private room" else 0],
+        "room_type_Shared room": [1 if room == "Shared room" else 0]
+    })
+
+if st.button("🔮 Predict Price"):
+    pred_price = model.predict(input_df)[0]
+    st.success(f"Estimated Price: **${pred_price:.2f}** per night")
