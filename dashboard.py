@@ -11,7 +11,7 @@ def load_cleaned_data():
     return pd.read_csv(data_path)
     
 def load_model():
-    model_path = os.path.join("src", "price_model.pkl")
+    model_path = os.path.join("src", "price_model.pkl")  
     return joblib.load(model_path)
 
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
@@ -49,12 +49,12 @@ col2.metric("Avg Reviews/Month", f"{filtered_df['reviews_per_month'].mean():.2f}
 col3.metric("Avg Availability", f"{filtered_df['availability_365'].mean():.0f} days")
 
 # --- Visualization ---
-st.subheader("💸 Price Distribution")
+st.subheader("Price Distribution")
 fig = px.histogram(filtered_df, x="price", nbins=30, title="Distribution of Prices")
 st.plotly_chart(fig, use_container_width=True)
 
 # --- Prediction Section ---
-st.header("🧠 Predict Airbnb Listing Price")
+st.header("Predict Airbnb Listing Price")
 st.markdown("Fill in the details below to estimate the price per night:")
 
 min_nights = st.number_input("Minimum Nights", min_value=1, max_value=30, value=3)
@@ -63,7 +63,7 @@ rev_month = st.number_input("Reviews per Month", min_value=0.0, max_value=30.0, 
 host_listings = st.number_input("Host Listings Count", min_value=1, max_value=100, value=2)
 avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
 
-if st.button("🔮 Predict Price"):
+if st.button("Predict Price"):
     input_df = prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room)
     pred_price = model.predict(input_df)[0]
     st.success(f"Estimated Price: **${pred_price:.2f}** per night")
