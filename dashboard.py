@@ -54,7 +54,7 @@ def prepare_input_dict(neigh: str, room: str, min_nights: int, num_reviews: int,
 
 # --- Prediction logic ---
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
-    return {
+    return pd.DataFrame({
         "minimum_nights": [min_nights],
         "number_of_reviews": [num_reviews],
         "reviews_per_month": [rev_month],
@@ -66,7 +66,8 @@ def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_
         "neighbourhood_group_Staten Island": [1 if neigh == "Staten Island" else 0],
         "room_type_Private room": [1 if room == "Private room" else 0],
         "room_type_Shared room": [1 if room == "Shared room" else 0]
-    }
+    })
+
 
 
 if st.button("🔮 Predict Price"):
