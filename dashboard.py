@@ -8,19 +8,7 @@ import os
 def load_cleaned_data():
     data_path = os.path.join("data", "NYC_2019.csv")
     return pd.read_csv(data_path)
-
-def load_model():
-    model_path = os.path.join("src", "price_model.pkl")
-    columns_path = os.path.join("src", "model_columns.pkl")
-
-    if not os.path.exists(model_path) or not os.path.exists(columns_path):
-        raise FileNotFoundError("Model or column file missing. Make sure both .pkl files exist.")
-
-    model = joblib.load(model_path)
-    model_columns = joblib.load(columns_path)
-
-    return model, model_columns
-
+    
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room, model_columns):
     # Initialize all columns as 0
     data = {col: 0 for col in model_columns}
