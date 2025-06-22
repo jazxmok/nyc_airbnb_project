@@ -15,12 +15,15 @@ from utils import load_cleaned_data, load_model, prepare_input_dict
 
 # --- Load data and model ---
 def load_cleaned_data():
-    df = os.path.join("data", "nyc_2019.csv")  # 👈 using nyc_2019.csv now
+    data_path = os.path.join("data", "nyc_2019.csv")
     return pd.read_csv(data_path)
 
 def load_model():
     model_path = os.path.join("models", "airbnb_price_model.pkl")
     return joblib.load(model_path)
+
+df = load_cleaned_data()
+model = load_model()
 
 # --- Sidebar filters ---
 st.sidebar.title("🔍 Filter Listings")
