@@ -3,15 +3,13 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import joblib
 import os
 import sys
-from src.utils import prepare_input_dict
 
+# Add 'src' directory to path
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
-# 🔧 Fix import path so 'src/' is recognized
-from utils import load_cleaned_data, load_model, prepare_input_dict
 
+from utils import load_cleaned_data, load_model, prepare_input_dict
 
 # --- Load data and model ---
 df = load_cleaned_data()
@@ -40,7 +38,6 @@ st.plotly_chart(fig, use_container_width=True)
 
 # --- Prediction Section ---
 st.header("🧠 Predict Airbnb Listing Price")
-
 st.markdown("Fill in the details below to estimate the price per night:")
 
 min_nights = st.number_input("Minimum Nights", min_value=1, max_value=30, value=3)
@@ -49,26 +46,8 @@ rev_month = st.number_input("Reviews per Month", min_value=0.0, max_value=30.0, 
 host_listings = st.number_input("Host Listings Count", min_value=1, max_value=100, value=2)
 avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
 
-# --- Prediction logic ---
-def prepare_input_dict(neigh: str, room: str, min_nights: int, num_reviews: int,
-                       rev_month: float, host_listings: int, avail_days: int) -> pd.DataFrame:
-
-
-# --- Prediction logic ---
-def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
-    return pd.DataFrame({
-        "minimum_nights": [min_nights],
-        "number_of_reviews": [num_reviews],
-        "reviews_per_month": [rev_month],
-        "calculated_host_listings_count": [host_listings],
-        "availability_365": [avail_days],
-        "neighbourhood_group_Brooklyn": [1 if neigh == "Brooklyn" else 0],
-        "neighbourhood_group_Manhattan": [1 if neigh == "Manhattan" else 0],
-        "neighbourhood_group_Queens": [1 if neigh == "Queens" else 0],
-        "neighbourhood_group_Staten Island": [1 if neigh == "Staten Island" else 0],
-        "room_type_Private room": [1 if room == "Private room" else 0],
-        "room_type_Shared room": [1 if room == "Shared room" else 0]
-    })
+# --- Prediction ---
+input_df = prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room)
 
 if st.button("🔮 Predict Price"):
     pred_price = model.predict(input_df)[0]
