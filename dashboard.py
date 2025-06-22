@@ -12,41 +12,36 @@ def load_cleaned_data():
 def load_model():
     model_path = os.path.join("src", "price_model.pkl")
     columns_path = os.path.join("src", "model_columns.pkl")
+
+    if not os.path.exists(model_path) or not os.path.exists(columns_path):
+        raise FileNotFoundError("Model or column file missing. Make sure both .pkl files exist.")
+
     model = joblib.load(model_path)
     model_columns = joblib.load(columns_path)
+
     return model, model_columns
 
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room, model_columns):
-    data = {
-        "minimum_nights": min_nights,
-        "number_of_reviews": num_reviews,
-        "reviews_per_month": rev_month,
-        "calculated_host_listings_count": host_listings,
-        "availability_365": avail_days,
-        "neighbourhood_group_Brooklyn": 0,
-        "neighbourhood_group_Manhattan": 0,
-        "neighbourhood_group_Queens": 0,
-        "neighbourhood_group_Staten Island": 0,
-        "room_type_Private room": 0,
-        "room_type_Shared room": 0
-    }
+    # Initialize all columns as 0
+    data = {col: 0 for col in model_columns}
 
-    ng_col = f"neighbourhood_group_{neigh}"
-    if ng_col in data:
-        data[ng_col] = 1
+    # Set known numerical fields
+    data["minimum_nights"] = min_nights
+    data["number_of_reviews"] = num_reviews
+    data["reviews_per_month"] = rev_month
+    data["calculated_host_listings_count"] = host_listings
+    data["availability_365"] = avail_days
 
-    rt_col = f"room_type_{room}"
-    if rt_col in data:
-        data[rt_col] = 1
+    # Set the one-hot encoded values
+    neigh_col = f"neighbourhood_group_{neigh}"
+    room_col = f"room_type_{room}"
 
-    df = pd.DataFrame([data])
+    if neigh_col in data:
+        data[neigh_col] = 1
+    if room_col in data:
+        data[room_col] = 1
 
-    # Add missing columns from model training
-    for col in model_columns:
-        if col not in df.columns:
-            df[col] = 0
-
-    return df[model_columns]
+    return pd.DataFrame([data])
 
 # --- Load data and model ---
 df = load_cleaned_data()
