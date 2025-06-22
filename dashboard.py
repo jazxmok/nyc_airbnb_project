@@ -15,7 +15,7 @@ from utils import load_cleaned_data, load_model, prepare_input_dict
 
 # --- Load data and model ---
 def load_cleaned_data():
-    data_path = os.path.join("data", "nyc_2019.csv")  # 👈 using nyc_2019.csv now
+    df = os.path.join("data", "nyc_2019.csv")  # 👈 using nyc_2019.csv now
     return pd.read_csv(data_path)
 
 def load_model():
