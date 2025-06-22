@@ -10,12 +10,6 @@ def load_cleaned_data():
     data_path = os.path.join("data", "NYC_2019.csv")
     return pd.read_csv(data_path)
     
-def load_model():
-    model_path = os.path.join("src", "price_model.pkl")
-    columns_path = os.path.join("src", "model_columns.pkl")
-    model = joblib.load(model_path)
-    model_columns = joblib.load(columns_path)
-    return model, model_columns
 
 
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
@@ -43,7 +37,7 @@ def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_
 
 
 df = load_cleaned_data()
-model = load_model()
+
 
 # --- Sidebar filters ---
 st.sidebar.title("🔍 Filter Listings")
