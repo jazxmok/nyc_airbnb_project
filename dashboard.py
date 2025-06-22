@@ -3,41 +3,54 @@ import plotly.express as px
 import pandas as pd
 import joblib
 import os
-import sys
 
 # --- Data loading helpers ---
 def load_cleaned_data():
     data_path = os.path.join("data", "NYC_2019.csv")
     return pd.read_csv(data_path)
-    
 
+def load_model():
+    model_path = os.path.join("src", "price_model.pkl")
+    columns_path = os.path.join("src", "model_columns.pkl")
+    model = joblib.load(model_path)
+    model_columns = joblib.load(columns_path)
+    return model, model_columns
 
-def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
+def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room, model_columns):
     data = {
-        "minimum_nights": [min_nights],
-        "number_of_reviews": [num_reviews],
-        "reviews_per_month": [rev_month],
-        "calculated_host_listings_count": [host_listings],
-        "availability_365": [avail_days],
-        "neighbourhood_group_Brooklyn": [0],
-        "neighbourhood_group_Manhattan": [0],
-        "neighbourhood_group_Queens": [0],
-        "neighbourhood_group_Staten Island": [0],
-        "room_type_Private room": [0],
-        "room_type_Shared room": [0]
+        "minimum_nights": min_nights,
+        "number_of_reviews": num_reviews,
+        "reviews_per_month": rev_month,
+        "calculated_host_listings_count": host_listings,
+        "availability_365": avail_days,
+        "neighbourhood_group_Brooklyn": 0,
+        "neighbourhood_group_Manhattan": 0,
+        "neighbourhood_group_Queens": 0,
+        "neighbourhood_group_Staten Island": 0,
+        "room_type_Private room": 0,
+        "room_type_Shared room": 0
     }
 
-    if f"neighbourhood_group_{neigh}" in data:
-        data[f"neighbourhood_group_{neigh}"] = [1]
+    ng_col = f"neighbourhood_group_{neigh}"
+    if ng_col in data:
+        data[ng_col] = 1
 
-    if f"room_type_{room}" in data:
-        data[f"room_type_{room}"] = [1]
+    rt_col = f"room_type_{room}"
+    if rt_col in data:
+        data[rt_col] = 1
 
-    return pd.DataFrame(data)
+    df = pd.DataFrame([data])
 
+    # Add missing columns from model training
+    for col in model_columns:
+        if col not in df.columns:
+            df[col] = 0
 
+    return df[model_columns]
+
+# --- Load data and model ---
 df = load_cleaned_data()
-
+model, model_columns = load_model()
 
 # --- Sidebar filters ---
 st.sidebar.title("🔍 Filter Listings")
@@ -71,6 +84,6 @@ host_listings = st.number_input("Host Listings Count", min_value=1, max_value=10
 avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
 
 if st.button("Predict Price"):
-    input_df = prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room)
+    input_df = prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room, model_columns)
     pred_price = model.predict(input_df)[0]
     st.success(f"Estimated Price: **${pred_price:.2f}** per night")
