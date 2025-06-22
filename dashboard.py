@@ -33,7 +33,6 @@ def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_
 
 # --- Load data and model ---
 df = load_cleaned_data()
-model, model_columns = load_model()
 
 # --- Sidebar filters ---
 st.sidebar.title("🔍 Filter Listings")
