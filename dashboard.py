@@ -49,9 +49,6 @@ rev_month = st.number_input("Reviews per Month", min_value=0.0, max_value=30.0, 
 host_listings = st.number_input("Host Listings Count", min_value=1, max_value=100, value=2)
 avail_days = st.number_input("Availability per Year", min_value=0, max_value=365, value=200)
 
-# --- Prediction logic ---
-def prepare_input_dict(neigh: str, room: str, min_nights: int, num_reviews: int,
-                       rev_month: float, host_listings: int, avail_days: int) -> pd.DataFrame:
 
 
 # --- Prediction logic ---
