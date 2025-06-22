@@ -12,7 +12,11 @@ def load_cleaned_data():
     
 def load_model():
     model_path = os.path.join("src", "price_model.pkl")
-    return joblib.load(model_path)
+    columns_path = os.path.join("src", "model_columns.pkl")
+    model = joblib.load(model_path)
+    model_columns = joblib.load(columns_path)
+    return model, model_columns
+
 
 def prepare_input_dict(min_nights, num_reviews, rev_month, host_listings, avail_days, neigh, room):
     data = {
